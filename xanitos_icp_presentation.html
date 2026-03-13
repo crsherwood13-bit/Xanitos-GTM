@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xanitos — Ideal Client Profile & Psychographic Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0a0f1e;
+    --navy2: #0f1628;
+    --navy3: #151d35;
+    --navy4: #1c2540;
+    --teal: #00c9a7;
+    --teal2: #00a887;
+    --teal-dim: rgba(0,201,167,0.12);
+    --teal-glow: rgba(0,201,167,0.06);
+    --blue: #3d8ef8;
+    --blue-dim: rgba(61,142,248,0.12);
+    --amber: #f5a623;
+    --amber-dim: rgba(245,166,35,0.12);
+    --coral: #ff6b6b;
+    --coral-dim: rgba(255,107,107,0.12);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.12);
+    --pink: #f472b6;
+    --green: #4ade80;
+    --white: #ffffff;
+    --white90: rgba(255,255,255,0.9);
+    --white70: rgba(255,255,255,0.7);
+    --white40: rgba(255,255,255,0.4);
+    --white15: rgba(255,255,255,0.15);
+    --white08: rgba(255,255,255,0.08);
+    --white04: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --border-bright: rgba(255,255,255,0.16);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE ENGINE ── */
+  .deck { width: 100vw; height: 100vh; position: relative; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(20px);
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1; pointer-events: all;
+    transform: translateY(0);
+  }
+  .slide.exit {
+    opacity: 0; transform: translateY(-20px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 12px; z-index: 100;
+    background: rgba(10,15,30,0.85); backdrop-filter: blur(12px);
+    border: 0.5px solid var(--border-bright); border-radius: 50px;
+    padding: 10px 20px;
+  }
+  .nav-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 0.5px solid var(--border-bright);
+    background: var(--white08); color: var(--white70);
+    cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .nav-btn:hover { background: var(--white15); color: var(--white); }
+  .nav-dots { display: flex; gap: 6px; align-items: center; padding: 0 6px; }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--white15); cursor: pointer; transition: all 0.2s;
+  }
+  .dot.active { background: var(--teal); width: 20px; border-radius: 3px; }
+  .slide-counter { font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--white40); letter-spacing: .05em; padding: 0 4px; }
+
+  /* ── LAYOUT HELPERS ── */
+  .slide-inner {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 48px 72px 100px;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .slide-inner::-webkit-scrollbar { width: 4px; }
+  .slide-inner::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+  .slide-header {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .slide-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 8px;
+  }
+  .slide-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 700;
+    color: var(--white); line-height: 1.15;
+  }
+  .slide-subtitle {
+    font-size: 14px; color: var(--white40); margin-top: 6px;
+    max-width: 560px;
+  }
+  .slide-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--white40); letter-spacing: .05em;
+    flex-shrink: 0; margin-bottom: 4px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--navy3);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border-bright); }
+  .card-accent-teal { border-left: 2px solid var(--teal); }
+  .card-accent-blue { border-left: 2px solid var(--blue); }
+  .card-accent-amber { border-left: 2px solid var(--amber); }
+  .card-accent-coral { border-left: 2px solid var(--coral); }
+  .card-accent-purple { border-left: 2px solid var(--purple); }
+
+  /* ── GRIDS ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* ── METRIC CARDS ── */
+  .metric-box {
+    background: var(--navy4);
+    border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 20px 24px;
+    position: relative; overflow: hidden;
+  }
+  .metric-box::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .metric-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px; font-weight: 800; color: var(--white); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-label { font-size: 12px; color: var(--white40); line-height: 1.4; }
+
+  /* ── TYPOGRAPHY ── */
+  h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; color: var(--white90); margin-bottom: 8px; }
+  h4 { font-size: 12px; font-weight: 500; color: var(--white40); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  p { font-size: 13px; color: var(--white70); line-height: 1.65; }
+  ul { list-style: none; padding: 0; }
+  li { font-size: 13px; color: var(--white70); line-height: 1.6; padding-left: 14px; position: relative; margin-bottom: 4px; }
+  li::before { content: '—'; position: absolute; left: 0; color: var(--teal); font-size: 10px; top: 4px; }
+  strong { color: var(--white90); font-weight: 500; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 20px; margin: 2px;
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: .02em;
+  }
+  .b-teal { background: var(--teal-dim); color: var(--teal); border: 0.5px solid rgba(0,201,167,0.3); }
+  .b-blue { background: var(--blue-dim); color: #70a8ff; border: 0.5px solid rgba(61,142,248,0.3); }
+  .b-amber { background: var(--amber-dim); color: var(--amber); border: 0.5px solid rgba(245,166,35,0.3); }
+  .b-coral { background: var(--coral-dim); color: var(--coral); border: 0.5px solid rgba(255,107,107,0.3); }
+  .b-purple { background: var(--purple-dim); color: var(--purple); border: 0.5px solid rgba(167,139,250,0.3); }
+  .b-gray { background: var(--white04); color: var(--white40); border: 0.5px solid var(--border); }
+
+  /* ── PERSONA TABS ── */
+  .tab-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+  .tab {
+    font-size: 12px; font-family: 'IBM Plex Mono', monospace;
+    padding: 7px 16px; border-radius: 6px;
+    border: 0.5px solid var(--border);
+    background: transparent; color: var(--white40);
+    cursor: pointer; transition: all .15s; letter-spacing: .03em;
+  }
+  .tab:hover { border-color: var(--border-bright); color: var(--white70); }
+  .tab.active { background: var(--teal-dim); border-color: rgba(0,201,167,0.4); color: var(--teal); }
+  .persona-panel { display: none; }
+  .persona-panel.active { display: block; }
+
+  /* ── PERSONA ── */
+  .persona-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .avatar {
+    width: 46px; height: 46px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .persona-meta { font-size: 12px; color: var(--white40); margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── BLOCKQUOTE ── */
+  blockquote {
+    border-left: 2px solid var(--teal);
+    padding: 10px 16px; margin-top: 16px;
+    background: var(--teal-glow); border-radius: 0 8px 8px 0;
+    font-size: 13px; font-style: italic; color: var(--white70);
+    line-height: 1.6;
+  }
+
+  /* ── TRIGGER ITEMS ── */
+  .trigger-item {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .trigger-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .trigger-num {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    font-weight: 600; color: var(--teal);
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--teal-dim); border: 0.5px solid rgba(0,201,167,0.25);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* ── BAR CHARTS ── */
+  .channel-bar { margin-bottom: 14px; }
+  .bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .bar-label-text { font-size: 12px; color: var(--white70); }
+  .bar-stars { font-size: 11px; color: var(--amber); letter-spacing: 1px; }
+  .bar-track { height: 5px; background: var(--white08); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+  /* ── CONTRACT TABLE ── */
+  .contract-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 0.5px solid var(--border);
+  }
+  .contract-row:last-child { border-bottom: none; }
+  .contract-key { font-size: 12px; color: var(--white40); }
+  .contract-val { font-size: 13px; font-weight: 500; color: var(--white90); font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── WIN ROWS ── */
+  .win-row {
+    display: flex; gap: 12px; padding: 12px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .win-row:last-child { border-bottom: none; }
+  .win-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+  .win-title { font-size: 13px; font-weight: 500; color: var(--white90); margin-bottom: 3px; }
+  .win-body { font-size: 12px; color: var(--white50, var(--white40)); line-height: 1.55; }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 20px 0; }
+
+  /* ── TITLE SLIDE ── */
+  .title-slide-inner {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; padding: 0 72px;
+    position: relative; overflow: hidden;
+  }
+  .title-bg-text {
+    position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+    font-family: 'Syne', sans-serif; font-size: 220px; font-weight: 800;
+    color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none;
+    white-space: nowrap; user-select: none;
+  }
+  .title-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--teal);
+    margin-bottom: 20px;
+  }
+  .title-label::before {
+    content: ''; width: 24px; height: 1px; background: var(--teal);
+  }
+  .title-main {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 60px; line-height: 1.05; color: var(--white);
+    margin-bottom: 6px;
+  }
+  .title-sub {
+    font-family: 'Syne', sans-serif; font-weight: 400;
+    font-size: 60px; line-height: 1.05; color: var(--white40);
+    margin-bottom: 28px;
+  }
+  .title-desc { font-size: 15px; color: var(--white50, rgba(255,255,255,0.5)); max-width: 520px; line-height: 1.7; margin-bottom: 36px; }
+  .title-stats {
+    display: flex; gap: 36px;
+  }
+  .tstat { display: flex; flex-direction: column; }
+  .tstat-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: var(--teal); }
+  .tstat-label { font-size: 11px; color: var(--white40); margin-top: 2px; }
+  .title-line {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, var(--teal), var(--blue), transparent);
+  }
+
+  /* ── PSYCHOGRAPHIC GRID ── */
+  .psycho-item {
+    padding: 14px 0; border-bottom: 0.5px solid var(--border);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .psycho-item:last-child { border-bottom: none; }
+  .psycho-icon {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+
+  /* ── COMPETITIVE ── */
+  .comp-card {
+    background: var(--navy3); border: 0.5px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .comp-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .comp-angle {
+    margin-top: 10px; padding: 8px 12px; border-radius: 6px;
+    background: var(--teal-dim); border: 0.5px solid rgba(0,201,167,0.2);
+  }
+  .comp-angle-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--teal); margin-bottom: 3px; font-family: 'IBM Plex Mono', monospace; }
+  .comp-angle p { font-size: 12px; color: var(--white70); }
+
+  /* GRID 3 metric row */
+  .top-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
+
+  /* Scroll fade hint */
+  .scroll-hint {
+    position: absolute; bottom: 80px; right: 72px;
+    font-size: 11px; color: var(--white15); font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: .06em; display: none;
+  }
+  .scrollable .scroll-hint { display: block; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══ SLIDE 1 — TITLE ═══ -->
+  <div class="slide active" id="slide-0">
+    <div class="title-line"></div>
+    <div class="title-slide-inner">
+      <div class="title-bg-text">ICP</div>
+      <div class="title-label">Strategic Brief · 2026</div>
+      <div class="title-main">Xanitos</div>
+      <div class="title-sub">Ideal Client Profile</div>
+      <p class="title-desc">Full psychographic mapping of decision makers, buying psychology, contract structure, and bid-winning strategy for hospital EVS outsourcing.</p>
+      <div class="title-stats">
+        <div class="tstat"><span class="tstat-num">~100</span><span class="tstat-label">Active clients</span></div>
+        <div class="tstat"><span class="tstat-num">3–5 yr</span><span class="tstat-label">Contract length</span></div>
+        <div class="tstat"><span class="tstat-num">$4.7B</span><span class="tstat-label">C. diff HAI market cost</span></div>
+        <div class="tstat"><span class="tstat-num">1/3</span><span class="tstat-label">US hospitals outsource EVS</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 2 — FIRMOGRAPHIC SNAPSHOT ═══ -->
+  <div class="slide" id="slide-1">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">01 — Who They Sell To</div>
+          <div class="slide-title">Firmographic Snapshot</div>
+          <div class="slide-subtitle">The organizations that become Xanitos clients share a tight cluster of characteristics</div>
+        </div>
+        <div class="slide-tag">ICP / Firmographic</div>
+      </div>
+
+      <div class="top-metrics">
+        <div class="metric-box">
+          <div class="metric-num">~100</div>
+          <div class="metric-label">Active clients nationwide</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-num">3–5 yr</div>
+          <div class="metric-label">Average contract term</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-num">9–18 mo</div>
+          <div class="metric-label">RFP-to-award cycle</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-num">&lt;3%</div>
+          <div class="metric-label">Operating margin pressure</div>
+        </div>
+      </div>
+
+      <div class="grid2" style="gap:20px">
+        <div class="card">
+          <h4>Facility Types</h4>
+          <div style="margin-bottom:16px">
+            <span class="badge b-teal">Acute care hospitals</span>
+            <span class="badge b-teal">Multi-site health systems</span>
+            <span class="badge b-blue">Critical access hospitals</span>
+            <span class="badge b-blue">Academic medical centers</span>
+            <span class="badge b-gray">Ambulatory / outpatient</span>
+            <span class="badge b-gray">Rural hospitals</span>
+          </div>
+          <h4>Services Scope</h4>
+          <div>
+            <span class="badge b-teal">Hospital housekeeping (EVS)</span>
+            <span class="badge b-blue">Patient transport</span>
+            <span class="badge b-blue">Linen management</span>
+            <span class="badge b-gray">Laundry services</span>
+            <span class="badge b-gray">Ambulatory cleaning</span>
+            <span class="badge b-gray">Patient observation</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Organizational Characteristics</h4>
+          <ul>
+            <li>100–750+ licensed beds</li>
+            <li>Understaffed in-house EVS department (vacancies &gt;20%)</li>
+            <li>Struggling HCAHPS cleanliness scores (below 75th percentile)</li>
+            <li>HAI pressure from Joint Commission or CMS</li>
+            <li>Operating margin below 3% — labor costs under scrutiny</li>
+            <li>Prior bad experience with Crothall, ABM, or HHS</li>
+            <li>Undergoing merger/acquisition or leadership transition</li>
+            <li>CFO-led cost transformation initiative underway</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h4>The Core Problem Xanitos Solves</h4>
+        <div class="grid3" style="margin-top:8px; gap:14px">
+          <div style="padding:14px; background:var(--navy4); border-radius:8px; border:0.5px solid var(--border)">
+            <div style="font-size:11px; color:var(--coral); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:6px">CLINICAL RISK</div>
+            <p>1 in 31 hospitalized patients contract an HAI. EVS is the first line of defense — and also the most commonly outsourced department.</p>
+          </div>
+          <div style="padding:14px; background:var(--navy4); border-radius:8px; border:0.5px solid var(--border)">
+            <div style="font-size:11px; color:var(--amber); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:6px">FINANCIAL PRESSURE</div>
+            <p>HCAHPS scores directly affect CMS reimbursement. Low cleanliness scores cost hospitals real dollars — not just reputation.</p>
+          </div>
+          <div style="padding:14px; background:var(--navy4); border-radius:8px; border:0.5px solid var(--border)">
+            <div style="font-size:11px; color:var(--teal); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:6px">STAFFING CRISIS</div>
+            <p>In-house EVS vacancy rates averaging 25–35% post-pandemic. Overtime costs spiral. Outsourcing becomes the rational exit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3 — DECISION MAKER PERSONAS ═══ -->
+  <div class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">02 — Who Makes the Decision</div>
+          <div class="slide-title">Decision Maker Personas</div>
+          <div class="slide-subtitle">EVS contracts are committee decisions — every stakeholder requires a distinct value message</div>
+        </div>
+        <div class="slide-tag">ICP / Psychographic</div>
+      </div>
+
+      <div class="tab-row">
+        <button class="tab active" onclick="showPersona('cfo')">CFO</button>
+        <button class="tab" onclick="showPersona('coo')">COO / VP Ops</button>
+        <button class="tab" onclick="showPersona('evs')">EVS Director</button>
+        <button class="tab" onclick="showPersona('cno')">CNO</button>
+        <button class="tab" onclick="showPersona('ip')">Infection Prevention</button>
+      </div>
+
+      <!-- CFO -->
+      <div id="p-cfo" class="persona-panel active">
+        <div class="persona-header">
+          <div class="avatar" style="background:var(--blue-dim); color:var(--blue)">CF</div>
+          <div>
+            <h2 style="margin:0; font-size:20px">Chief Financial Officer</h2>
+            <div class="persona-meta">Age 45–58 · MBA/CPA · 5+ yrs in role · Reports to CEO · Controls budget sign-off</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent-teal">
+            <h4>Core Motivations</h4>
+            <ul>
+              <li>Reduce labor overhead and benefits cost</li>
+              <li>Convert fixed EVS cost to variable</li>
+              <li>Improve operating margin</li>
+              <li>Avoid CMS penalty exposure from HAIs</li>
+              <li>Board-level optics on "right-sizing"</li>
+            </ul>
+          </div>
+          <div class="card card-accent-coral">
+            <h4>Primary Fears</h4>
+            <ul>
+              <li>Surprise cost escalations post-contract</li>
+              <li>Vendor lock-in with deteriorating performance</li>
+              <li>Staff morale / union friction at transition</li>
+              <li>Reputational damage from high-profile incident</li>
+              <li>Loss of control over a clinical-adjacent function</li>
+            </ul>
+          </div>
+        </div>
+        <blockquote>"We need to get EVS off the payroll, but the last company we used left us with worse scores and a staffing mess."</blockquote>
+        <div class="card" style="margin-top:16px; background:var(--teal-glow); border-color:rgba(0,201,167,0.2)">
+          <h4>What Wins Them Over</h4>
+          <p>ROI models with cost-per-bed benchmarks. Peer hospital comparisons. Guaranteed KPI contracts with penalty clauses. Case studies showing margin improvement. The CFO needs to defend the decision to the board — give them the data.</p>
+        </div>
+      </div>
+
+      <!-- COO -->
+      <div id="p-coo" class="persona-panel">
+        <div class="persona-header">
+          <div class="avatar" style="background:var(--teal-dim); color:var(--teal)">CO</div>
+          <div>
+            <h2 style="margin:0; font-size:20px">COO / VP of Operations</h2>
+            <div class="persona-meta">Age 42–55 · MHA or clinical background · Day-to-day operator · Often the internal champion</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent-teal">
+            <h4>Core Motivations</h4>
+            <ul>
+              <li>Smoother day-to-day hospital operations</li>
+              <li>Reduce admin burden of managing EVS staff</li>
+              <li>Improve patient throughput and room turnover</li>
+              <li>Better staffing reliability and coverage</li>
+              <li>Defend HCAHPS and Joint Commission scores</li>
+            </ul>
+          </div>
+          <div class="card card-accent-coral">
+            <h4>Primary Fears</h4>
+            <ul>
+              <li>Disruption and chaos during transition period</li>
+              <li>Clinical staff complaints about cleanliness</li>
+              <li>Vendor unresponsiveness on-site</li>
+              <li>Losing institutional knowledge of current EVS team</li>
+              <li>Finger-pointing when patient incidents arise</li>
+            </ul>
+          </div>
+        </div>
+        <blockquote>"I don't care who cleans the rooms — I care that rooms are ready when surgery needs them and that I'm not fielding complaints at 10pm."</blockquote>
+        <div class="card" style="margin-top:16px; background:var(--teal-glow); border-color:rgba(0,201,167,0.2)">
+          <h4>What Wins Them Over</h4>
+          <p>Detailed transition playbooks. On-site management presence commitments. Real-time dashboards (XRO system). References from peer hospital COOs. Dedicated named account manager with direct phone number.</p>
+        </div>
+      </div>
+
+      <!-- EVS Director -->
+      <div id="p-evs" class="persona-panel">
+        <div class="persona-header">
+          <div class="avatar" style="background:var(--amber-dim); color:var(--amber)">EV</div>
+          <div>
+            <h2 style="margin:0; font-size:20px">Director of Environmental Services</h2>
+            <div class="persona-meta">Age 38–52 · Often internal hire · High-influence recommender OR silent veto</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent-teal">
+            <h4>Core Motivations</h4>
+            <ul>
+              <li>Retain or secure their own role post-transition</li>
+              <li>Access to better training programs (AORN Skills Fair)</li>
+              <li>Modern equipment and protocols (XRO-style)</li>
+              <li>Earn respect from clinical peers</li>
+              <li>Reduce vacancy and overtime pain</li>
+            </ul>
+          </div>
+          <div class="card card-accent-coral">
+            <h4>Primary Fears</h4>
+            <ul>
+              <li>Being made redundant after outsourcing</li>
+              <li>Frontline staff turnover or cultural clash</li>
+              <li>Vendor lowballing wages, causing attrition</li>
+              <li>Being blamed for a failed transition</li>
+            </ul>
+          </div>
+        </div>
+        <blockquote>"I've seen companies come in and gut the team we built. I need to know my people will be treated right — and that I still have a seat at the table."</blockquote>
+        <div class="card" style="margin-top:16px; background:var(--teal-glow); border-color:rgba(0,201,167,0.2)">
+          <h4>What Wins Them Over</h4>
+          <p>Role-retention guarantees. Pay-parity pledges in writing. Transparent staffing model demos (XanStaff). Technology demonstrations. Peer EVS director reference calls from existing Xanitos sites.</p>
+        </div>
+      </div>
+
+      <!-- CNO -->
+      <div id="p-cno" class="persona-panel">
+        <div class="persona-header">
+          <div class="avatar" style="background:var(--purple-dim); color:var(--purple)">CN</div>
+          <div>
+            <h2 style="margin:0; font-size:20px">Chief Nursing Officer</h2>
+            <div class="persona-meta">Age 48–60 · Clinical champion · Influential veto voice · Patient outcomes owner</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent-teal">
+            <h4>Core Motivations</h4>
+            <ul>
+              <li>Safe patient environment, zero HAIs</li>
+              <li>Faster room turnaround times for nursing workflow</li>
+              <li>EVS responsiveness to nursing requests</li>
+              <li>Higher patient satisfaction scores (HCAHPS)</li>
+            </ul>
+          </div>
+          <div class="card card-accent-coral">
+            <h4>Primary Fears</h4>
+            <ul>
+              <li>EVS contractors who don't understand clinical culture</li>
+              <li>Inconsistent cleaning quality on night/weekend shifts</li>
+              <li>Communication breakdowns between EVS and nursing</li>
+              <li>C. diff or MRSA outbreaks linked to EVS lapses</li>
+            </ul>
+          </div>
+        </div>
+        <blockquote>"My nurses need EVS to be an extension of the care team, not a vendor who clocks out at 5."</blockquote>
+        <div class="card" style="margin-top:16px; background:var(--teal-glow); border-color:rgba(0,201,167,0.2)">
+          <h4>What Wins Them Over</h4>
+          <p>Clinical partnership language throughout the proposal. AORN certification credentials for EVS staff. HAI data from peer facilities. Direct testimonials from charge nurses at existing Xanitos reference sites.</p>
+        </div>
+      </div>
+
+      <!-- IP Officer -->
+      <div id="p-ip" class="persona-panel">
+        <div class="persona-header">
+          <div class="avatar" style="background:rgba(74,222,128,0.12); color:var(--green)">IP</div>
+          <div>
+            <h2 style="margin:0; font-size:20px">Infection Prevention Officer</h2>
+            <div class="persona-meta">Age 40–58 · CIC-certified · Technical validator · Can kill or accelerate a deal</div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card card-accent-teal">
+            <h4>Core Motivations</h4>
+            <ul>
+              <li>Measurable HAI reduction, documented outcomes</li>
+              <li>CDC and Joint Commission compliance confidence</li>
+              <li>Validated cleaning protocols for isolation rooms</li>
+              <li>Access to UV-C and electrostatic technology</li>
+            </ul>
+          </div>
+          <div class="card card-accent-coral">
+            <h4>Primary Fears</h4>
+            <ul>
+              <li>Vendor cutting corners on terminal cleans</li>
+              <li>Inadequate outbreak response protocols</li>
+              <li>Staff not trained in isolation precautions</li>
+              <li>Compliance gaps flagged during surveys</li>
+            </ul>
+          </div>
+        </div>
+        <blockquote>"Show me your C. diff terminal cleaning SOP and your fluorescent marker audit scores."</blockquote>
+        <div class="card" style="margin-top:16px; background:var(--teal-glow); border-color:rgba(0,201,167,0.2)">
+          <h4>What Wins Them Over</h4>
+          <p>Published clinical outcomes data. XRO methodology documentation. ATP/fluorescent marker audit results from active sites. Willingness to co-develop infection prevention protocols alongside the hospital's IP team.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4 — PSYCHOGRAPHIC CORE ═══ -->
+  <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">03 — How They Think</div>
+          <div class="slide-title">Shared Psychographic Profile</div>
+          <div class="slide-subtitle">What unites all Xanitos buyers is a deeply risk-averse, consensus-driven, mission-oriented mindset</div>
+        </div>
+        <div class="slide-tag">ICP / Psychographic</div>
+      </div>
+
+      <div class="grid2" style="gap:20px; margin-bottom:20px">
+        <div class="card">
+          <h4>What They Value</h4>
+          <ul>
+            <li>Patient safety above all other concerns</li>
+            <li>Proven methodology — not promises</li>
+            <li>Accountability and radical transparency</li>
+            <li>Minimal disruption to clinical operations</li>
+            <li>Long-term partnership vs. transactional vendor</li>
+            <li>Data and metrics, never anecdotes</li>
+            <li>Vendors who understand healthcare culture</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Personality Archetype</h4>
+          <div class="psycho-item">
+            <div class="psycho-icon" style="background:var(--coral-dim); color:var(--coral)">⚠</div>
+            <div><strong>Risk-averse:</strong><span style="color:var(--white40); font-size:12px"> Loss aversion dominates. The pain of a wrong decision is 3× the gain of a right one.</span></div>
+          </div>
+          <div class="psycho-item">
+            <div class="psycho-icon" style="background:var(--blue-dim); color:var(--blue)">◉</div>
+            <div><strong>Consensus-driven:</strong><span style="color:var(--white40); font-size:12px"> 4–7 person buying committee. No single approver. Politics matter.</span></div>
+          </div>
+          <div class="psycho-item">
+            <div class="psycho-icon" style="background:var(--amber-dim); color:var(--amber)">◈</div>
+            <div><strong>Skeptical:</strong><span style="color:var(--white40); font-size:12px"> Burned by vendors before. Promises trigger alarm bells. Numbers open doors.</span></div>
+          </div>
+          <div class="psycho-item">
+            <div class="psycho-icon" style="background:var(--teal-dim); color:var(--teal)">✦</div>
+            <div><strong>Mission-oriented:</strong><span style="color:var(--white40); font-size:12px"> "We're saving lives." Vendors who mirror this language earn trust.</span></div>
+          </div>
+          <div class="psycho-item" style="border-bottom:none">
+            <div class="psycho-icon" style="background:var(--purple-dim); color:var(--purple)">⏱</div>
+            <div><strong>Slow to decide:</strong><span style="color:var(--white40); font-size:12px"> 9–18 month cycles. Pressure to decide does not accelerate — it stalls.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--navy4)">
+        <h4>Buying Committee Dynamics</h4>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px; margin-top:4px">
+          <div style="display:flex; align-items:center; gap:6px; padding:7px 14px; background:var(--blue-dim); border-radius:6px; border:0.5px solid rgba(61,142,248,0.25)">
+            <span style="font-size:11px; color:var(--blue); font-family:'IBM Plex Mono',monospace">CFO</span>
+            <span style="font-size:10px; color:var(--white40)">budget sign-off</span>
+          </div>
+          <div style="color:var(--white15)">→</div>
+          <div style="display:flex; align-items:center; gap:6px; padding:7px 14px; background:var(--teal-dim); border-radius:6px; border:0.5px solid rgba(0,201,167,0.25)">
+            <span style="font-size:11px; color:var(--teal); font-family:'IBM Plex Mono',monospace">COO</span>
+            <span style="font-size:10px; color:var(--white40)">champion / veto</span>
+          </div>
+          <div style="color:var(--white15)">→</div>
+          <div style="display:flex; align-items:center; gap:6px; padding:7px 14px; background:var(--amber-dim); border-radius:6px; border:0.5px solid rgba(245,166,35,0.25)">
+            <span style="font-size:11px; color:var(--amber); font-family:'IBM Plex Mono',monospace">EVS Dir.</span>
+            <span style="font-size:10px; color:var(--white40)">internal advocate</span>
+          </div>
+          <div style="color:var(--white15)">→</div>
+          <div style="display:flex; align-items:center; gap:6px; padding:7px 14px; background:var(--purple-dim); border-radius:6px; border:0.5px solid rgba(167,139,250,0.25)">
+            <span style="font-size:11px; color:var(--purple); font-family:'IBM Plex Mono',monospace">CNO</span>
+            <span style="font-size:10px; color:var(--white40)">clinical validator</span>
+          </div>
+          <div style="color:var(--white15)">→</div>
+          <div style="display:flex; align-items:center; gap:6px; padding:7px 14px; background:rgba(74,222,128,0.1); border-radius:6px; border:0.5px solid rgba(74,222,128,0.2)">
+            <span style="font-size:11px; color:var(--green); font-family:'IBM Plex Mono',monospace">IP Officer</span>
+            <span style="font-size:10px; color:var(--white40)">technical approval</span>
+          </div>
+        </div>
+        <p>No single person can greenlight alone. The CFO controls budget. The COO/EVS Director hold the champion or veto. The CNO and IP Officer are technical validators who can kill any deal on clinical credibility grounds. <strong>Every stakeholder must be handled individually — with a message calibrated to their specific fear and incentive.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5 — TRIGGER EVENTS ═══ -->
+  <div class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">04 — When They Buy</div>
+          <div class="slide-title">Contract Trigger Events</div>
+          <div class="slide-subtitle">Xanitos wins when specific organizational events create urgency — identify these in prospect research</div>
+        </div>
+        <div class="slide-tag">ICP / Trigger Map</div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="trigger-item">
+          <div class="trigger-num">01</div>
+          <div>
+            <h3>Joint Commission or CMS Survey Failure</h3>
+            <p>Cleanliness citations create immediate urgency. Often produces a 60–90 day procurement fast-track. The board gets involved. This is the highest-urgency trigger — status quo becomes politically untenable overnight.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-coral">High urgency</span></div>
+        </div>
+        <div class="trigger-item">
+          <div class="trigger-num">02</div>
+          <div>
+            <h3>HAI Outbreak or C. diff Spike</h3>
+            <p>Infection events generate board-level pressure, press coverage risk, and legal exposure. At $24,205 per C. diff case, a single outbreak makes the cost of outsourcing trivial. Creates emotional as well as financial urgency.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-coral">High urgency</span></div>
+        </div>
+        <div class="trigger-item">
+          <div class="trigger-num">03</div>
+          <div>
+            <h3>EVS Staffing Crisis (Vacancies &gt;25%)</h3>
+            <p>Inability to recruit and retain in-house EVS staff is the #1 operational driver of outsourcing decisions. When overtime costs spiral and rooms aren't being turned, CFOs look for the exit. Xanitos reduced one client's vacancies 75% and OT 70%.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-amber">Medium urgency</span></div>
+        </div>
+        <div class="trigger-item">
+          <div class="trigger-num">04</div>
+          <div>
+            <h3>Incumbent Contract Renewal or Dissatisfaction</h3>
+            <p>Most bids come from hospitals already outsourced to a competitor (Crothall, ABM, HHS) whose performance has slipped. The 12-month window before contract expiry is the primary prospecting sweet spot.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-amber">Medium urgency</span></div>
+        </div>
+        <div class="trigger-item">
+          <div class="trigger-num">05</div>
+          <div>
+            <h3>Hospital Merger or System Acquisition</h3>
+            <p>New system leadership standardizes vendors across the portfolio — creating large multi-site RFP opportunities. A single win at the system level can unlock 3–8 hospitals simultaneously. Watch for M&A activity in target markets.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-blue">Strategic</span></div>
+        </div>
+        <div class="trigger-item">
+          <div class="trigger-num">06</div>
+          <div>
+            <h3>Operating Margin Pressure or Budget Reset</h3>
+            <p>CFO-led cost transformation initiatives put all labor-heavy departments under outsourcing review. EVS is the largest controllable labor line in facility services — it's always on the list when margins compress.</p>
+          </div>
+          <div style="flex-shrink:0; margin-top:2px"><span class="badge b-blue">Strategic</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6 — BID STRATEGY ═══ -->
+  <div class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">05 — How to Win</div>
+          <div class="slide-title">Bid-Winning Strategy</div>
+          <div class="slide-subtitle">Channel effectiveness rankings and the six moves that actually beat competing bids</div>
+        </div>
+        <div class="slide-tag">Strategy / Channels</div>
+      </div>
+
+      <div class="grid2" style="gap:20px">
+        <div class="card">
+          <h4>Channel Effectiveness</h4>
+          <div style="margin-top:8px">
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">Direct relationship / warm referral</span>
+                <span class="bar-stars">★★★★★</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:96%; background:var(--teal)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">CFO/COO peer reference calls</span>
+                <span class="bar-stars">★★★★★</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:92%; background:var(--teal)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">Site tour at existing client hospital</span>
+                <span class="bar-stars">★★★★☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:80%; background:var(--blue)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">Conferences (ASHE, APIC, AHIMA)</span>
+                <span class="bar-stars">★★★★☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:76%; background:var(--blue)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">GPO relationships (Vizient, Premier)</span>
+                <span class="bar-stars">★★★★☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:72%; background:var(--blue)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">Formal written RFP response</span>
+                <span class="bar-stars">★★★☆☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:52%; background:var(--amber)"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">LinkedIn / executive digital outreach</span>
+                <span class="bar-stars">★★☆☆☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:30%; background:#888"></div></div>
+            </div>
+            <div class="channel-bar">
+              <div class="bar-header">
+                <span class="bar-label-text">Cold call to procurement department</span>
+                <span class="bar-stars">★☆☆☆☆</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:12%; background:var(--coral)"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Six Moves That Beat Competing Bids</h4>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--teal)"></div>
+            <div>
+              <div class="win-title">Win before the RFP lands</div>
+              <div class="win-body">70%+ of EVS contracts go to vendors with a pre-existing relationship. Get in front of the COO/CFO 12 months before contract expiry.</div>
+            </div>
+          </div>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--teal)"></div>
+            <div>
+              <div class="win-title">Facilitate warm CFO-to-CFO intros</div>
+              <div class="win-body">A peer phone call beats any proposal document. Current Xanitos clients making reference calls is the fastest close path in the playbook.</div>
+            </div>
+          </div>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--blue)"></div>
+            <div>
+              <div class="win-title">Demo XRO + XanStaff early</div>
+              <div class="win-body">Patented systems no competitor can replicate. Tie each feature directly to the prospect's specific pain metrics.</div>
+            </div>
+          </div>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--blue)"></div>
+            <div>
+              <div class="win-title">Quantify HCAHPS uplift from comps</div>
+              <div class="win-body">Show documented score improvements (65th → 99th percentile). Pull the prospect's current published HCAHPS data and build the narrative around it.</div>
+            </div>
+          </div>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--amber)"></div>
+            <div>
+              <div class="win-title">Lead with a transition risk plan</div>
+              <div class="win-body">Objection #1 is always disruption. Respond with a detailed playbook, dedicated transition manager, and a 90-day performance guarantee.</div>
+            </div>
+          </div>
+          <div class="win-row">
+            <div class="win-dot" style="background:var(--amber)"></div>
+            <div>
+              <div class="win-title">Build a staffing cost model</div>
+              <div class="win-body">Xanitos cut one client's vacancies 75% and OT 70%. Quantify this against the prospect's current vacancy and overtime spend. Make it a line in the proposal.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7 — CONTRACT STRUCTURE ═══ -->
+  <div class="slide" id="slide-6">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">06 — Contract Intelligence</div>
+          <div class="slide-title">Contract Structure & Lifecycle</div>
+          <div class="slide-subtitle">Key commercial terms, timing windows, and pricing model for EVS outsourcing deals</div>
+        </div>
+        <div class="slide-tag">Commercial / Contracts</div>
+      </div>
+
+      <div class="grid2" style="gap:20px; margin-bottom:20px">
+        <div class="card">
+          <h4>Contract Terms</h4>
+          <div class="contract-row">
+            <span class="contract-key">Typical initial contract term</span>
+            <span class="contract-val">3 years</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Common renewal structure</span>
+            <span class="contract-val">3 + 2 yr options</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Large health system deals</span>
+            <span class="contract-val">5 years standard</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Time in market before switching</span>
+            <span class="contract-val">3–7 years avg.</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Key pricing model</span>
+            <span class="contract-val">Mgmt fee + labor pass-through</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">KPI benchmarks tied to contract</span>
+            <span class="contract-val">HCAHPS, HAI rate, room TAT</span>
+          </div>
+        </div>
+        <div class="card">
+          <h4>Sales Cycle Timing</h4>
+          <div class="contract-row">
+            <span class="contract-key">RFP-to-signed contract cycle</span>
+            <span class="contract-val">9–18 months</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Ideal prospecting window</span>
+            <span class="contract-val">12–18 mo. before expiry</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Fast-track trigger event window</span>
+            <span class="contract-val">60–90 days post-incident</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Transition period</span>
+            <span class="contract-val">60–120 days typical</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Time to first HCAHPS improvement</span>
+            <span class="contract-val">~6–12 months</span>
+          </div>
+          <div class="contract-row">
+            <span class="contract-key">Decision committee size</span>
+            <span class="contract-val">4–7 stakeholders</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid3" style="gap:14px">
+        <div style="padding:18px; background:var(--navy4); border-radius:10px; border:0.5px solid rgba(0,201,167,0.2)">
+          <div style="font-size:11px; color:var(--teal); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:8px">PROSPECTING WINDOW</div>
+          <p>Monitor competitor contract award dates via trade databases. An unhappy client 14 months into a 3-year deal is actively exploring options even if their contract won't expire for 22 months.</p>
+        </div>
+        <div style="padding:18px; background:var(--navy4); border-radius:10px; border:0.5px solid rgba(245,166,35,0.2)">
+          <div style="font-size:11px; color:var(--amber); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:8px">PRICING LEVERAGE</div>
+          <p>Labor pass-through pricing removes margin risk from Xanitos but requires crystal-clear SOW. Upsell levers include ambulatory cleaning, patient transport, and laundry — typically added in contract years 2–4.</p>
+        </div>
+        <div style="padding:18px; background:var(--navy4); border-radius:10px; border:0.5px solid rgba(61,142,248,0.2)">
+          <div style="font-size:11px; color:var(--blue); font-family:'IBM Plex Mono',monospace; letter-spacing:.06em; margin-bottom:8px">RENEWAL STRATEGY</div>
+          <p>Renewal risk spikes when HCAHPS scores plateau and the CFO starts comparing costs again. Protect the account by delivering visible technology upgrades and providing quarterly performance reviews that tie back to financial outcomes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8 — COMPETITIVE LANDSCAPE ═══ -->
+  <div class="slide" id="slide-7">
+    <div class="slide-inner">
+      <div class="slide-header">
+        <div>
+          <div class="slide-eyebrow">07 — Competitive Context</div>
+          <div class="slide-title">How Xanitos Wins Against Competitors</div>
+          <div class="slide-subtitle">The field is narrow — four major players compete for the same acute care hospital contracts</div>
+        </div>
+        <div class="slide-tag">Competitive / Positioning</div>
+      </div>
+
+      <div class="grid2" style="gap:16px; margin-bottom:20px">
+        <div class="comp-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+            <div class="comp-name">Crothall Healthcare</div>
+            <span class="badge b-coral">Primary rival</span>
+          </div>
+          <ul>
+            <li>Largest EVS outsourcer in the US</li>
+            <li>Part of Compass Group — very large parent</li>
+            <li>Perception: "big and bureaucratic"</li>
+            <li>Slower response at site level</li>
+          </ul>
+          <div class="comp-angle">
+            <div class="comp-angle-label">Win Angle</div>
+            <p>Xanitos is founder-led, healthcare-specialist only, and more operationally responsive. Position as the alternative that acts like a partner, not a contract number.</p>
+          </div>
+        </div>
+        <div class="comp-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+            <div class="comp-name">ABM Industries</div>
+            <span class="badge b-amber">Secondary rival</span>
+          </div>
+          <ul>
+            <li>Broad facility services — not healthcare-only</li>
+            <li>Competes across commercial/industrial sectors</li>
+            <li>EVS is a product line, not a mission</li>
+            <li>Lacks proprietary clinical methodology</li>
+          </ul>
+          <div class="comp-angle">
+            <div class="comp-angle-label">Win Angle</div>
+            <p>Xanitos is healthcare-only — EVS is the entire company mission, not a division. The XRO® patent is a credibility signal ABM cannot replicate.</p>
+          </div>
+        </div>
+        <div class="comp-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+            <div class="comp-name">HHS (Healthcare Support Services)</div>
+            <span class="badge b-amber">Secondary rival</span>
+          </div>
+          <ul>
+            <li>Healthcare-focused, 500+ clients</li>
+            <li>Strong in long-term care / post-acute</li>
+            <li>Less differentiated in acute care specifically</li>
+            <li>No equivalent to XRO patented system</li>
+          </ul>
+          <div class="comp-angle">
+            <div class="comp-angle-label">Win Angle</div>
+            <p>Xanitos's acute care specialization and proprietary technology (XRO + XanStaff) creates a defensible clinical proof story HHS struggles to match in hospital settings.</p>
+          </div>
+        </div>
+        <div class="comp-card">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+            <div class="comp-name">In-House EVS Team</div>
+            <span class="badge b-blue">Status quo</span>
+          </div>
+          <ul>
+            <li>The default "competitor" in every deal</li>
+            <li>Perceived as lower risk, higher control</li>
+            <li>Usually has entrenched allies in the building</li>
+            <li>Typically underperforming vs. benchmarks</li>
+          </ul>
+          <div class="comp-angle">
+            <div class="comp-angle-label">Win Angle</div>
+            <p>Attack the status quo with the prospect's own data — their published HCAHPS scores, their vacancy rates, their overtime spend. Make the cost of doing nothing undeniable.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--teal-glow); border-color:rgba(0,201,167,0.25)">
+        <h4>Xanitos's Moat — What Competitors Cannot Match</h4>
+        <div class="grid3" style="gap:14px; margin-top:10px">
+          <div>
+            <div style="font-size:13px; font-weight:500; color:var(--teal); margin-bottom:4px">XRO® System</div>
+            <p>Patented, proprietary cleaning methodology. Peer-reviewed. Tied directly to measurable HAI reduction and HCAHPS score improvement. No competitor has an equivalent.</p>
+          </div>
+          <div>
+            <div style="font-size:13px; font-weight:500; color:var(--teal); margin-bottom:4px">XanStaff Software</div>
+            <p>Proprietary productivity and staffing platform. Enables real-time labor optimization, vacancy tracking, and shift coverage — the operational backbone of every Xanitos site.</p>
+          </div>
+          <div>
+            <div style="font-size:13px; font-weight:500; color:var(--teal); margin-bottom:4px">Specialist-Only Focus</div>
+            <p>Healthcare EVS is 100% of Xanitos's revenue. Every hire, every system, every process is built around the clinical environment. This is a cultural and commercial advantage.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn" onclick="prev()">←</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" onclick="next()">→</button>
+  <span class="slide-counter" id="counter">1 / 8</span>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.add('exit');
+    slides[current].classList.remove('active');
+    setTimeout(() => slides[current - 0].classList.remove('exit'), 300);
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+  });
+
+  // Persona tabs
+  function showPersona(id) {
+    document.querySelectorAll('.persona-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('p-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+  window.showPersona = showPersona;
+
+  // Animate bars on slide entrance
+  function animateBars() {
+    document.querySelectorAll('.bar-fill').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => bar.style.width = w, 100);
+    });
+  }
+  // Run on load and slide 5
+  animateBars();
+</script>
+</body>
+</html>
